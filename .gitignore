@@ -40,5 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# vercel link
+.vercel
+
 # plantilla de variables (sí se sube)
 !.env.example
