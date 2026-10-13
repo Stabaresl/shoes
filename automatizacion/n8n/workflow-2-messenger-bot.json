@@ -1,0 +1,392 @@
+{
+  "name": "Footshooter — Bot de Messenger",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "messenger",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "nodo-0012",
+      "name": "Verificación de Meta",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        60
+      ],
+      "webhookId": "footshooter-messenger-get"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Meta llama esta URL una sola vez (GET) para comprobar que el webhook es tuyo.\n// Este token lo inventas tú y lo escribes IGUAL en el panel de Meta.\n// Es el único sitio donde vive: cámbialo aquí y en Meta, en ningún lado más.\nconst VERIFY_TOKEN = 'footshooter-verificacion-2026';\n\nconst q = $input.first().json.query || {};\n\nif (q['hub.mode'] !== 'subscribe' || q['hub.verify_token'] !== VERIFY_TOKEN) {\n  throw new Error('Token de verificación incorrecto. Recibido: ' + q['hub.verify_token']);\n}\n\nreturn [{ json: { challenge: q['hub.challenge'] } }];"
+      },
+      "id": "nodo-0013",
+      "name": "Comprobar token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.challenge }}",
+        "options": {}
+      },
+      "id": "nodo-0014",
+      "name": "Devolver challenge",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "messenger",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "nodo-0015",
+      "name": "Mensaje entrante",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        340
+      ],
+      "webhookId": "footshooter-messenger-post"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "asig-0016",
+              "name": "PAGE_ID",
+              "value": "PEGA_AQUI_EL_ID_DE_TU_PAGINA",
+              "type": "string"
+            },
+            {
+              "id": "asig-0017",
+              "name": "GRAPH_VERSION",
+              "value": "v23.0",
+              "type": "string"
+            },
+            {
+              "id": "asig-0018",
+              "name": "CATALOGO_URL",
+              "value": "http://host.docker.internal:3000/api/catalogo",
+              "type": "string"
+            },
+            {
+              "id": "asig-0019",
+              "name": "WHATSAPP",
+              "value": "573122651224",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "nodo-0020",
+      "name": "Configuración",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Meta manda un lote de eventos. Nos quedamos solo con mensajes de texto de personas.\nconst cuerpo = $input.first().json.body || {};\nconst salida = [];\n\nfor (const entrada of cuerpo.entry || []) {\n  for (const evento of entrada.messaging || []) {\n    const mensaje = evento.message;\n\n    // Ignorar acuses de entrega/lectura y los ecos de lo que envía la propia página.\n    if (!mensaje || mensaje.is_echo) continue;\n    if (!mensaje.text) continue;\n\n    salida.push({\n      json: {\n        remitenteId: evento.sender.id,\n        texto: mensaje.text,\n        recibidoEn: new Date().toISOString(),\n      },\n    });\n  }\n}\n\nreturn salida;   // si va vacío, el flujo se detiene aquí y no gasta nada"
+      },
+      "id": "nodo-0021",
+      "name": "Extraer mensaje",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configuración').first().json.CATALOGO_URL }}",
+        "options": {}
+      },
+      "id": "nodo-0022",
+      "name": "Obtener catálogo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Arma la petición para Claude: instrucciones + catálogo compacto + historial.\n// >>> AQUÍ SE EDITA LA PERSONALIDAD DEL BOT (la lista \"instrucciones\") <<<\nconst entrada = $('Extraer mensaje').first().json;\nconst catalogo = $('Obtener catálogo').first().json;\n\n// Mientras la web corra solo en local, su enlace no le sirve a ningún cliente.\nconst esPublico = (u) => !!u && !/localhost|127\\.0\\.0\\.1|host\\.docker\\.internal/.test(u);\n\n// Catálogo compacto, una línea por producto, para gastar pocos tokens.\nconst lineas = (catalogo.productos || []).map((p) => [\n  p.nombre,\n  p.color,\n  p.categoria,\n  p.precioTexto,\n  p.agotado ? 'AGOTADO' : 'tallas ' + p.tallasDisponibles.join('/'),\n  esPublico(p.url) ? p.url : null,\n].filter((c) => c !== null).join(' | '));\n\nconst instrucciones = [\n  'Eres el asistente de footshootermzl, una tienda de zapatos en Medellín, Colombia.',\n  'Atiendes por Messenger. Hablas en español colombiano, cercano y breve, de tú.',\n  '',\n  'REGLAS:',\n  '- Responde en 600 caracteres o menos. Sin listas largas ni markdown: esto es un chat.',\n  '- Usa ÚNICAMENTE los datos del catálogo de abajo. Precios, tallas y modelos salen de ahí.',\n  '- Si preguntan por algo que no está en el catálogo, dilo claro y ofrece alternativas parecidas.',\n  '- Nunca inventes precios, tallas, plazos de envío, promociones ni disponibilidad.',\n  '- Si preguntan por envíos, pagos, apartados o cualquier cosa que no esté en el catálogo,',\n  '  no improvises: pasa la conversación a WhatsApp.',\n  '',\n  'PASO A WHATSAPP:',\n  '- Cuando el cliente quiera comprar, apartar, negociar, o pida algo que no puedes resolver',\n  '  con el catálogo, termina tu respuesta con la marca [WHATSAPP] en una línea aparte.',\n  '- Esa marca no la ve el cliente: el sistema la borra y le muestra un botón de WhatsApp.',\n  '- No escribas el número de WhatsApp en el texto; del botón se encarga el sistema.',\n  '',\n  '- Comparte el enlace de un producto solo si aparece en su línea del catálogo.',\n  '',\n  'CATÁLOGO (nombre | color | categoría | precio | tallas | enlace si lo hay):',\n  lineas.join('\\n'),\n].join('\\n');\n\n// Historial corto por persona, para que el bot no pierda el hilo.\nconst memoria = $getWorkflowStaticData('global');\nif (!memoria.conversaciones) memoria.conversaciones = {};\n\nconst previo = memoria.conversaciones[entrada.remitenteId];\nconst historial = previo && Array.isArray(previo.mensajes) ? previo.mensajes : [];\n\nconst mensajes = [...historial, { role: 'user', content: entrada.texto }];\n\nreturn [{\n  json: {\n    remitenteId: entrada.remitenteId,\n    cuerpo: {\n      model: 'claude-opus-5',\n      max_tokens: 1024,\n      output_config: { effort: 'low' },\n      system: [\n        { type: 'text', text: instrucciones, cache_control: { type: 'ephemeral' } },\n      ],\n      messages: mensajes,\n    },\n  },\n}];"
+      },
+      "id": "nodo-0023",
+      "name": "Construir prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        740,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.cuerpo) }}",
+        "options": {}
+      },
+      "id": "nodo-0024",
+      "name": "Consultar a Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Saca el texto de Claude, detecta la marca [WHATSAPP] y guarda el historial.\nconst config = $('Configuración').first().json;\nconst previo = $('Construir prompt').first().json;\nconst respuesta = $input.first().json;\n\nif (respuesta.stop_reason === 'refusal') {\n  throw new Error('Claude rechazó la petición: ' + JSON.stringify(respuesta.stop_details || {}));\n}\n\nlet texto = (respuesta.content || [])\n  .filter((b) => b.type === 'text')\n  .map((b) => b.text)\n  .join('\\n')\n  .trim();\n\nconst pasarAWhatsApp = texto.includes('[WHATSAPP]');\ntexto = texto.replace(/\\[WHATSAPP\\]/g, '').trim();\n\nif (!texto) {\n  texto = 'Cuéntame qué modelo te interesa y te ayudo.';\n}\n\n// Messenger corta en 2000 caracteres.\nif (texto.length > 1900) texto = texto.slice(0, 1897) + '...';\n\n// Guardar historial: últimos 8 turnos por persona.\nconst memoria = $getWorkflowStaticData('global');\nif (!memoria.conversaciones) memoria.conversaciones = {};\n\nconst mensajes = [\n  ...previo.cuerpo.messages,\n  { role: 'assistant', content: texto },\n].slice(-8);\n\nmemoria.conversaciones[previo.remitenteId] = {\n  mensajes,\n  actualizado: Date.now(),\n};\n\n// Purga conversaciones de más de 24 h para que la memoria no crezca sin control.\nconst limite = Date.now() - 24 * 60 * 60 * 1000;\nfor (const [clave, valor] of Object.entries(memoria.conversaciones)) {\n  if (!valor.actualizado || valor.actualizado < limite) {\n    delete memoria.conversaciones[clave];\n  }\n}\n\nreturn [{\n  json: {\n    remitenteId: previo.remitenteId,\n    texto,\n    pasarAWhatsApp,\n    cuerpoMensaje: {\n      recipient: { id: previo.remitenteId },\n      messaging_type: 'RESPONSE',\n      message: { text: texto },\n    },\n    cuerpoBoton: {\n      recipient: { id: previo.remitenteId },\n      messaging_type: 'RESPONSE',\n      message: {\n        attachment: {\n          type: 'template',\n          payload: {\n            template_type: 'button',\n            text: '¿Seguimos por WhatsApp? Ahí te atendemos de una.',\n            buttons: [{\n              type: 'web_url',\n              url: 'https://wa.me/' + config.WHATSAPP,\n              title: 'Escribir por WhatsApp',\n            }],\n          },\n        },\n      },\n    },\n  },\n}];"
+      },
+      "id": "nodo-0025",
+      "name": "Preparar respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/' + $('Configuración').first().json.GRAPH_VERSION + '/' + $('Configuración').first().json.PAGE_ID + '/messages' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.cuerpoMensaje) }}",
+        "options": {}
+      },
+      "id": "nodo-0026",
+      "name": "Responder en Messenger",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1400,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-0027",
+              "leftValue": "={{ $('Preparar respuesta').first().json.pasarAWhatsApp }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "nodo-0028",
+      "name": "¿Pasar a WhatsApp?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1620,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/' + $('Configuración').first().json.GRAPH_VERSION + '/' + $('Configuración').first().json.PAGE_ID + '/messages' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Preparar respuesta').first().json.cuerpoBoton) }}",
+        "options": {}
+      },
+      "id": "nodo-0029",
+      "name": "Botón de WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1840,
+        240
+      ]
+    }
+  ],
+  "connections": {
+    "Verificación de Meta": {
+      "main": [
+        [
+          {
+            "node": "Comprobar token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comprobar token": {
+      "main": [
+        [
+          {
+            "node": "Devolver challenge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje entrante": {
+      "main": [
+        [
+          {
+            "node": "Configuración",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuración": {
+      "main": [
+        [
+          {
+            "node": "Extraer mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer mensaje": {
+      "main": [
+        [
+          {
+            "node": "Obtener catálogo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener catálogo": {
+      "main": [
+        [
+          {
+            "node": "Construir prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir prompt": {
+      "main": [
+        [
+          {
+            "node": "Consultar a Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar a Claude": {
+      "main": [
+        [
+          {
+            "node": "Preparar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar respuesta": {
+      "main": [
+        [
+          {
+            "node": "Responder en Messenger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder en Messenger": {
+      "main": [
+        [
+          {
+            "node": "¿Pasar a WhatsApp?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Pasar a WhatsApp?": {
+      "main": [
+        [
+          {
+            "node": "Botón de WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

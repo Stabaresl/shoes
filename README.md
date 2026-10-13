@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# footshootermzl — tienda online de calzado
 
-## Getting Started
+Tienda de tenis deportivos, urbanos y casuales. El catálogo se maneja desde una
+hoja de Google y las fotos desde Google Drive; los pedidos llegan por WhatsApp.
 
-First, run the development server:
+## Correrla en el computador
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abran http://localhost:3000. Sin configurar nada, usa el catálogo guardado en
+`src/lib/products.ts`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuración
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copien `.env.example` como `.env.local` (o pongan las variables en Vercel):
 
-## Learn More
+| Variable | Para qué |
+| --- | --- |
+| `CATALOGO_URL` | Enlace de la hoja de Google con el catálogo. |
+| `REVALIDAR_CLAVE` | Clave para refrescar el catálogo al instante (`/api/revalidar?clave=…`). |
+| `GOOGLE_API_KEY` | Opcional: permite poner carpetas de Drive en la columna de fotos. |
+| `NEXT_PUBLIC_WHATSAPP` | Opcional: cambia el WhatsApp de la tienda. |
+| `SITIO_URL` | URL pública (la usan las automatizaciones de n8n). |
 
-To learn more about Next.js, take a look at the following resources:
+Textos, colecciones del carrusel, videos y redes sociales se cambian en
+`src/lib/tienda.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentación
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `catalogo/COMO-USAR-LA-HOJA.md` — cómo manejar el catálogo desde Google Sheets y Drive.
+- `catalogo/plantilla-catalogo.csv` — el catálogo actual, listo para importar a la hoja.
+- `automatizacion/` — publicaciones automáticas en Facebook y bot de Messenger (n8n).
 
-## Deploy on Vercel
+## Cómo está hecha
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Next.js 16, Tailwind CSS 4, Framer Motion, Zustand (carrito) y PapaParse (lectura
+de la hoja). La galería de portada (`src/components/ui/morph-gallery.tsx`) y el
+carrusel de polaroids (`src/components/ui/polaroid-line-carousel.tsx`) vienen de
+21st.dev.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Publicarla
+
+Importen este repositorio en [Vercel](https://vercel.com), agreguen las
+variables de arriba y listo. Cada `git push` a `main` vuelve a publicar la tienda.

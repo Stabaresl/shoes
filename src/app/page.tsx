@@ -1,69 +1,129 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, MessageCircle } from "lucide-react";
+import { Cinta } from "@/components/home/Cinta";
+import { Colecciones, type Coleccion } from "@/components/home/Colecciones";
+import { ComoComprar } from "@/components/home/ComoComprar";
+import { EnMovimiento } from "@/components/home/EnMovimiento";
+import { HeroGaleria } from "@/components/home/HeroGaleria";
+import { ProductGrid } from "@/components/ProductGrid";
+import {
+  obtenerCatalogo,
+  obtenerDestacados,
+  obtenerPortada,
+  slugificar,
+  tituloCategoria,
+} from "@/lib/catalogo";
+import { urlOptimizada } from "@/lib/imagen";
+import type { Product } from "@/lib/products";
+import { CATEGORIAS, CINTA, COLECCIONES, CONTRA_ENTREGA, enlaceWhatsApp, VIDEOS } from "@/lib/tienda";
+import { formatPrice } from "@/lib/utils";
 
-export default function Home() {
+function armarColecciones(productos: Product[]): Coleccion[] {
+  const colecciones: Coleccion[] = [];
+  const crear = (tipo: "marca" | "categoria", valor: string, foto?: string) => {
+    const suyos = productos.filter((p) =>
+      tipo === "marca" ? slugificar(p.brand) === slugificar(valor) : p.category === valor
+    );
+    if (suyos.length === 0) return;
+    const portada = suyos.find((p) => p.slug === foto) ?? suyos[0];
+    const modelos = `${suyos.length} ${suyos.length === 1 ? "modelo" : "modelos"}`;
+    colecciones.push({
+      titulo: tipo === "marca" ? suyos[0].brand : tituloCategoria(valor),
+      descripcion: tipo === "categoria" && CATEGORIAS[valor] ? `${modelos} · ${CATEGORIAS[valor].frase}` : modelos,
+      imagen: urlOptimizada(portada.images[0], 640),
+      href: tipo === "marca" ? `/marca/${slugificar(valor)}` : `/coleccion/${valor}`,
+    });
+  };
+
+  for (const c of COLECCIONES) crear(c.tipo, c.valor, c.foto);
+  // Categorías nuevas que lleguen desde la hoja y no estén en la lista.
+  const categorias = new Set(productos.map((p) => p.category));
+  for (const cat of categorias) {
+    if (!COLECCIONES.some((c) => c.tipo === "categoria" && c.valor === cat)) crear("categoria", cat);
+  }
+  return colecciones;
+}
+
+export default async function Inicio() {
+  const [portada, destacados, catalogo] = await Promise.all([
+    obtenerPortada(),
+    obtenerDestacados(),
+    obtenerCatalogo(),
+  ]);
+  const whatsapp = enlaceWhatsApp("¡Hola! Vengo de la tienda y quiero unos tenis.");
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <HeroGaleria
+        whatsapp={whatsapp}
+        bajada={
+          CONTRA_ENTREGA
+            ? "Deportivos, urbanos y casuales. Escoges, nos escribes y pagas cuando te llega."
+            : "Deportivos, urbanos y casuales. Escoges tu par y nos escribes."
+        }
+        fotos={portada.map((p) => ({
+          src: urlOptimizada(p.images[0], 1920),
+          thumb: urlOptimizada(p.images[0], 256),
+          alt: `${p.name} ${p.colorway}`,
+          nombre: p.name,
+          color: p.colorway,
+          precio: formatPrice(p.price),
+          slug: p.slug,
+        }))}
+      />
+
+      <Cinta textos={CINTA} className="-mt-6" />
+
+      <section className="mx-auto max-w-7xl px-4 pt-24 pb-24 sm:px-6">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+          <h2 className="titular text-5xl sm:text-7xl">
+            Lo más
+            <br />
+            <span className="relative inline-block">
+              pedido
+              <svg
+                aria-hidden
+                viewBox="0 0 300 20"
+                className="absolute -bottom-2 left-0 h-4 w-full text-accent"
+                preserveAspectRatio="none"
+              >
+                <path d="M2 14 C 80 2, 200 2, 298 12" fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+              </svg>
+            </span>
+          </h2>
+          <Link
+            href="/catalogo"
+            className="group inline-flex items-center gap-2 font-bold underline decoration-accent decoration-4 underline-offset-8"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Ver los {catalogo.length} pares
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
-      </main>
-    </div>
+        <ProductGrid products={destacados} />
+      </section>
+
+      <Colecciones colecciones={armarColecciones(catalogo)} />
+      <Cinta textos={CINTA} invertida className="-mt-5" />
+
+      <EnMovimiento videos={VIDEOS} />
+      <ComoComprar />
+
+      {whatsapp && (
+        <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
+          <div className="relative overflow-hidden rounded-[2.5rem] border-4 border-ink bg-accent p-8 sm:p-14">
+            <p className="font-marker text-xl">¿no encuentras tu talla?</p>
+            <h2 className="titular mt-2 max-w-3xl text-5xl sm:text-7xl">Escríbenos y te ayudamos a encontrarlo</h2>
+            <a
+              href={whatsapp}
+              target="_blank"
+              rel="noreferrer"
+              className="sobre-oscuro mt-8 inline-flex h-14 items-center gap-2 rounded-full bg-ink px-7 font-bold text-paper shadow-[5px_5px_0_var(--color-paper)] transition-[translate,box-shadow] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+            >
+              <MessageCircle className="size-5" /> Hablar por WhatsApp
+            </a>
+          </div>
+        </section>
+      )}
+    </>
   );
 }

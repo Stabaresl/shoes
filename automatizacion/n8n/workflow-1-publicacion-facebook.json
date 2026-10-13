@@ -1,0 +1,232 @@
+{
+  "name": "Footshooter — Publicación en Facebook",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9,13,19 * * *"
+            }
+          ]
+        }
+      },
+      "id": "nodo-0001",
+      "name": "Horario de publicación",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -140,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "asig-0002",
+              "name": "PAGE_ID",
+              "value": "PEGA_AQUI_EL_ID_DE_TU_PAGINA",
+              "type": "string"
+            },
+            {
+              "id": "asig-0003",
+              "name": "GRAPH_VERSION",
+              "value": "v23.0",
+              "type": "string"
+            },
+            {
+              "id": "asig-0004",
+              "name": "CATALOGO_URL",
+              "value": "http://host.docker.internal:3000/api/catalogo",
+              "type": "string"
+            },
+            {
+              "id": "asig-0005",
+              "name": "WHATSAPP",
+              "value": "573122651224",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "nodo-0006",
+      "name": "Configuración",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.CATALOGO_URL }}",
+        "options": {}
+      },
+      "id": "nodo-0007",
+      "name": "Obtener catálogo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Escoge el siguiente producto de la rotación y arma el texto de la publicación.\nconst config = $('Configuración').first().json;\nconst catalogo = $input.first().json;\n\nconst productos = (catalogo.productos || []).filter((p) => !p.agotado);\nif (productos.length === 0) {\n  throw new Error('El catálogo no devolvió productos disponibles. Revisa CATALOGO_URL.');\n}\n\n// La memoria del workflow recuerda qué se publicó ya en esta vuelta.\n// OJO: solo se guarda en ejecuciones reales (workflow activo), no en pruebas manuales.\nconst memoria = $getWorkflowStaticData('global');\nif (!Array.isArray(memoria.publicados)) memoria.publicados = [];\n\nlet pendientes = productos.filter((p) => !memoria.publicados.includes(p.slug));\nif (pendientes.length === 0) {\n  memoria.publicados = [];           // vuelta completa: vuelve a empezar\n  pendientes = productos;\n}\n\nconst producto = pendientes[0];\nconst tallas = producto.tallasDisponibles.join(', ');\n\n// Mientras la web corra solo en local, su enlace no le sirve a nadie en Facebook.\n// En cuanto publiques el sitio y definas SITIO_URL, el enlace aparece solo.\nconst esPublico = (u) => !!u && !/localhost|127\\.0\\.0\\.1|host\\.docker\\.internal/.test(u);\n\nconst copy = [\n  producto.nombre + ' — ' + producto.color,\n  '',\n  producto.descripcion,\n  '',\n  'Precio: ' + producto.precioTexto,\n  'Tallas disponibles: ' + tallas,\n  '',\n  'Pídelos por WhatsApp: https://wa.me/' + config.WHATSAPP,\n  esPublico(producto.url) ? 'Míralos en la tienda: ' + producto.url : null,\n].filter((l) => l !== null).join('\\n');\n\nreturn [{\n  json: {\n    slug: producto.slug,\n    nombre: producto.nombre,\n    imagenUrl: producto.imagenes[0],\n    copy,\n    quedanPorPublicar: pendientes.length - 1,\n  },\n}];"
+      },
+      "id": "nodo-0008",
+      "name": "Elegir producto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.imagenUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "foto"
+            }
+          }
+        }
+      },
+      "id": "nodo-0009",
+      "name": "Descargar foto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/' + $('Configuración').first().json.GRAPH_VERSION + '/' + $('Configuración').first().json.PAGE_ID + '/photos' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "source",
+              "inputDataFieldName": "foto"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $('Elegir producto').first().json.copy }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "nodo-0010",
+      "name": "Publicar en Facebook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Marca el producto como publicado solo si Facebook respondió bien.\nconst memoria = $getWorkflowStaticData('global');\nif (!Array.isArray(memoria.publicados)) memoria.publicados = [];\n\nconst elegido = $('Elegir producto').first().json;\nif (!memoria.publicados.includes(elegido.slug)) {\n  memoria.publicados.push(elegido.slug);\n}\nmemoria.ultimaPublicacion = new Date().toISOString();\n\nconst respuesta = $input.first().json;\n\nreturn [{\n  json: {\n    publicado: elegido.slug,\n    nombre: elegido.nombre,\n    postId: respuesta.post_id || respuesta.id || null,\n    fecha: memoria.ultimaPublicacion,\n    llevanPublicados: memoria.publicados.length,\n  },\n}];"
+      },
+      "id": "nodo-0011",
+      "name": "Registrar publicado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Horario de publicación": {
+      "main": [
+        [
+          {
+            "node": "Configuración",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuración": {
+      "main": [
+        [
+          {
+            "node": "Obtener catálogo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener catálogo": {
+      "main": [
+        [
+          {
+            "node": "Elegir producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir producto": {
+      "main": [
+        [
+          {
+            "node": "Descargar foto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar foto": {
+      "main": [
+        [
+          {
+            "node": "Publicar en Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publicar en Facebook": {
+      "main": [
+        [
+          {
+            "node": "Registrar publicado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

@@ -1,26 +1,121 @@
 @import "tailwindcss";
 
+/*
+ * PROPUESTA de paleta (a confirmar), derivada del logo real:
+ * - tinta: el azul marino del logo, más profundo para dar contraste.
+ * - naranja: el naranja quemado del logo, subido de energía para botones y
+ *   etiquetas. Ojo: sobre papel NO se usa como color de texto (2,7:1); solo como
+ *   fondo con texto en tinta (5,2:1) o como texto sobre tinta.
+ * - pizarra: el gris azulado del logo, oscurecido para texto secundario (4,9:1).
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --alto-header: 72px;
+  --color-ink: #13213a;
+  --color-ink-soft: #2b3d58;
+  --color-slate: #556a7c;
+  --color-slate-light: #c9d2da;
+  --color-accent: #ff5b1f;
+  --color-accent-dark: #e44a10;
+  --color-accent-light: #ffd9c7;
+  --color-sky: #bcd4ea;
+  --color-paper: #f1efe9;
+  --color-paper-card: #ffffff;
+  --color-moss: #2f6b3f;
+  --color-moss-light: #dceadf;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-slate: var(--color-slate);
+  --color-slate-light: var(--color-slate-light);
+  --color-accent: var(--color-accent);
+  --color-accent-dark: var(--color-accent-dark);
+  --color-accent-light: var(--color-accent-light);
+  --color-sky: var(--color-sky);
+  --color-paper: var(--color-paper);
+  --color-paper-card: var(--color-paper-card);
+  --color-moss: var(--color-moss);
+  --color-moss-light: var(--color-moss-light);
+
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-jakarta);
+  --font-marker: var(--font-marcador);
+
+  --shadow-duro: 4px 4px 0 var(--color-ink);
+  --shadow-duro-lg: 8px 8px 0 var(--color-ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* Foco visible en toda la tienda (tinta: contraste alto sobre papel y naranja). */
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+}
+.sobre-oscuro :focus-visible {
+  outline-color: var(--color-paper);
+}
+
+/* Títulos de la marca: Archivo pesado, inclinado y ancho, como el logo. */
+.titular {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 112%;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+}
+.titular-angosto {
+  font-stretch: 75%;
+}
+
+/* Textura de grano muy sutil sobre el papel, para que no se vea plano. */
+.grano::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Movimiento reducido: cada animación declara su alternativa en esta variable. */
+@property --animacion-reducida {
+  syntax: "*";
+  inherits: false;
+  initial-value: none;
+}
+
+/* Cinta que corre (marquee). El contenido va duplicado y se desplaza -50%. */
+.cinta-pista {
+  display: flex;
+  width: max-content;
+  animation: cinta 32s linear infinite;
+}
+.cinta:hover .cinta-pista {
+  animation-play-state: paused;
+}
+@keyframes cinta {
+  to {
+    translate: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .cinta-pista {
+    animation: var(--animacion-reducida) !important;
+  }
 }

@@ -1,0 +1,64 @@
+﻿activo,portada,destacado,categoria,marca,modelo,color,precio,tallas,fotos,descripcion
+si,,si,urbano,Adidas,Samba,Blanco / Negro,444000,36-44,/products/urbano/adidas-samba-blanco-negro-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,si,,urbano,Adidas,Samba,Blanco / Rojo,339000,"36-37, 39-44",/products/urbano/adidas-samba-blanco-rojo-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
+si,,,deportivo,Asics,Gel,Blanco / Negro,459000,"36-40, 42-44",/products/deportivo/asics-gel-blanco-negro-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,si,urbano,Adidas,Spezial,Verde Oliva,429000,"36-39, 41-44",/products/urbano/adidas-spezial-verde-oliva-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
+si,,,urbano,Jordan,3 Retro,Crema / Rosa,219000,36-44,/products/urbano/jordan-3-retro-crema-rosa-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,urbano,Adidas,Samba,Negro / Crema,309000,36-44,/products/urbano/adidas-samba-negro-crema-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,urbano,Adidas,Samba,Café / Blanco,564000,"36, 38-43",/products/urbano/adidas-samba-cafe-blanco-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
+si,,,urbano,Adidas,Samba,Plata Metalizado,504000,"36-40, 42-44",/products/urbano/adidas-samba-plata-metalizado-01.jpg,Silueta retro con carácter: la que combinas con todo y queda bien con nada que perder.
+si,si,,deportivo,On,Cloud,Lila / Crema,414000,"36-39, 41-44",/products/deportivo/on-cloud-lila-crema-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,si,,urbano,New Balance,1906R,Blanco / Negro,489000,36-44,/products/urbano/new-balance-1906r-blanco-negro-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,deportivo,New Balance,1906A,Gris / Rosa,264000,36-44,/products/deportivo/new-balance-1906a-gris-rosa-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,si,si,deportivo,On,Cloud,Negro / Blanco,234000,"37-42, 44",/products/deportivo/on-cloud-negro-blanco-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,Nike,Initiator,Blanco / Verde,339000,"36-39, 41-44",/products/deportivo/nike-initiator-blanco-verde-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,si,si,urbano,Jordan,1 Low,Café Mocha,219000,36-44,/products/urbano/jordan-1-low-travis-cafe-01.jpg /products/urbano/jordan-1-low-travis-cafe-02.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,si,,deportivo,Nike,Mercurial,Rosa / Morado,444000,36-44,/products/deportivo/nike-mercurial-rosa-morado-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,Nike,Mercurial,Gris / Rosa,279000,"36-40, 42-44",/products/deportivo/nike-mercurial-gris-rosa-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,Nike,Mercurial,Menta / Rosa / Dorado,549000,"36-39, 41-44",/products/deportivo/nike-mercurial-menta-rosa-dorado-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,Nike,Mercurial,Blanco / Turquesa,234000,"36-40, 42-44",/products/deportivo/nike-mercurial-blanco-turquesa-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,si,deportivo,Nike,Mercurial,Turquesa / Rosa,264000,36-44,/products/deportivo/nike-mercurial-turquesa-rosa-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,Nike,Mercurial,Blanco / Azul / Rosa,414000,"36-39, 41-44",/products/deportivo/nike-mercurial-blanco-azul-rosa-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,Nike,Mercurial,Blanco / Azul,504000,"36, 38-43",/products/deportivo/nike-mercurial-blanco-azul-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,Nike,Mercurial,Durazno / Azul,474000,"36, 38-43",/products/deportivo/nike-mercurial-durazno-azul-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,,,deportivo,Nike,Mercurial,Rosa / Durazno,339000,"36, 38-43",/products/deportivo/nike-mercurial-rosa-durazno-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,,si,deportivo,On,Cloud,Menta / Negro,294000,"36, 38-43",/products/deportivo/on-cloud-menta-negro-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,,,deportivo,On,Cloud,Azul / Gris / Lima,489000,36-44,/products/deportivo/on-cloud-azul-gris-lima-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,On,Cloud,Gris / Naranja,354000,36-44,/products/deportivo/on-cloud-gris-naranja-01.jpg /products/deportivo/on-cloud-gris-naranja-02.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,On,Cloud,Menta / Blanco,504000,"36-37, 39-44",/products/deportivo/on-cloud-menta-blanco-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,On,Cloud,Azul / Gris Marino,414000,"36, 38-43",/products/deportivo/on-cloud-azul-gris-marino-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,On,Cloud,Marino / Gris / Lima,429000,"36-38, 40-44",/products/deportivo/on-cloud-marino-gris-lima-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,,,urbano,footshootermzl,Street,Blanco / Menta,324000,"37-42, 44",/products/urbano/sneaker-blanco-menta-worn-01.jpg,Silueta retro con carácter: la que combinas con todo y queda bien con nada que perder.
+si,,,urbano,Balenciaga,Triple S,Blanco,309000,36-44,/products/urbano/balenciaga-triple-s-blanco-01.jpg /products/urbano/balenciaga-triple-s-blanco-02.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,deportivo,On,Cloud Trail,Oliva / Rosa,549000,"37-42, 44",/products/deportivo/on-cloud-trail-oliva-rosa-worn-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,casual,Nike,Blazer Low,Blanco,234000,"36-40, 42-44",/products/casual/nike-blazer-low-blanco-01.jpg,"Comodidad de sobra para cualquier plan, del café de la mañana a la salida de la noche."
+si,,,deportivo,Adidas,Adizero ATR,Azul,489000,36-44,/products/deportivo/adidas-adizero-atr-azul-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,Adidas,Boost Runner,Blanco / Negro,354000,36-44,/products/deportivo/adidas-boost-runner-blanco-negro-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,si,,deportivo,Adidas,Supernova,Rojo / Blanco,504000,"36-39, 41-44",/products/deportivo/adidas-supernova-rojo-blanco-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,Adidas,Hyperboost,Blanco / Verde,264000,36-44,/products/deportivo/adidas-hyperboost-blanco-verde-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,Adidas,Adizero Evo SL,Plata / Blanco,324000,"36-39, 41-44",/products/deportivo/adidas-adizero-evo-plata-blanco-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,Adidas,Adizero Evo SL,Beige / Crema,459000,"37-42, 44",/products/deportivo/adidas-adizero-evo-beige-crema-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,si,,deportivo,Adidas,Adizero Evo SL,Negro / Naranja,489000,36-44,/products/deportivo/adidas-adizero-evo-negro-naranja-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,Adidas,Adizero Evo SL,Negro / Plata,474000,"36-37, 39-44",/products/deportivo/adidas-adizero-evo-negro-plata-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,,,deportivo,Adidas,Adizero Evo SL,Rosa / Dorado,429000,"36-38, 40-44",/products/deportivo/adidas-adizero-evo-rosa-dorado-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,,,deportivo,Adidas,Adizero Evo SL ATR,Beige / Rosa,264000,36-44,/products/deportivo/adidas-adizero-atr-beige-rosa-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,Adidas,Adizero Evo SL ATR,Azul Marino,369000,"36-39, 41-44",/products/deportivo/adidas-adizero-atr-azul-marino-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,deportivo,Adidas,Adizero Evo SL ATR,Beige / Naranja,264000,36-44,/products/deportivo/adidas-adizero-atr-beige-naranja-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,Adidas,Repetitor,Verde / Blanco,519000,"36-38, 40-44",/products/deportivo/adidas-repetitor-verde-blanco-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,,,deportivo,Adidas,Repetitor,Negro / Gris,534000,36-44,/products/deportivo/adidas-repetitor-negro-gris-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,urbano,New Balance,9060,Crema / Menta,249000,"37-42, 44",/products/urbano/new-balance-9060-crema-menta-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
+si,,si,urbano,New Balance,9060,Crema / Vino,294000,"36-40, 42-44",/products/urbano/new-balance-9060-crema-vino-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
+si,,,urbano,New Balance,9060,Café,504000,"36-39, 41-44",/products/urbano/new-balance-9060-cafe-worn-01.jpg,Silueta retro con carácter: la que combinas con todo y queda bien con nada que perder.
+si,,,urbano,New Balance,9060,Café / Crema,339000,"36-40, 42-44",/products/urbano/new-balance-9060-cafe-crema-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
+si,,,urbano,New Balance,9060,Gris,264000,36-44,/products/urbano/new-balance-9060-gris-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,deportivo,New Balance,1906A,Gris / Menta,264000,36-44,/products/deportivo/new-balance-1906a-gris-menta-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,si,urbano,New Balance,9060,Negro,564000,"36-37, 39-44",/products/urbano/new-balance-9060-negro-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
+si,,,urbano,Amiri,Runner,Crema / Café,399000,36-44,/products/urbano/amiri-crema-cafe-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,urbano,New Balance,WRPD,Gris / Azul,219000,36-44,/products/urbano/new-balance-wrpd-gris-azul-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,deportivo,New Balance,Fresh Foam X,Blanco / Menta,234000,"36-38, 40-44",/products/deportivo/new-balance-fresh-foam-blanco-menta-01.jpg,La combinación de peso ligero y soporte que necesitas para exigirte un poco más cada vez.
+si,,,urbano,Adidas,Yeezy 700,Estático Gris,309000,36-44,/products/urbano/adidas-yeezy-700-gris-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,deportivo,Adidas,Adizero Adios Pro,Negro / Blanco,489000,36-44,/products/deportivo/adidas-adizero-adios-pro-negro-blanco-01.jpg,Diseñada para rendir: amortiguación responsive y agarre que no te suelta en ningún ritmo.
+si,,,deportivo,Under Armour,HOVR,Gris / Negro,564000,"36-37, 39-44",/products/deportivo/under-armour-gris-negro-01.jpg,"Técnica hasta el último detalle, cómoda desde el primer paso."
+si,,,urbano,Adidas,Handball Spezial Benito,Blanco / Negro,249000,"37-42, 44",/products/urbano/adidas-spezial-benito-blanco-negro-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
+si,,,urbano,Jordan,Air Fusion,Gris / Rojo,534000,36-44,/products/urbano/jordan-chunky-gris-rojo-worn-01.jpg,Un ícono de calle que no pasa desapercibido — para andar con actitud propia.
+si,,,urbano,Adidas,Gazelle Indoor x Bad Bunny,Azul San Juan,429000,"36-41, 43-44",/products/urbano/adidas-gazelle-bad-bunny-azul-01.jpg,De esas que cuentas por qué las compraste. Estilo urbano sin esfuerzo.
